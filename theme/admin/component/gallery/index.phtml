@@ -1,0 +1,83 @@
+<?php $this->partial('shared/header'); ?>
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <form>
+                <?= $this->form->field('q'); ?>
+                <div class="form-group text-right">
+                    <button class="btn btn-default">Find</button>
+                </diV>
+            </form>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    Total result: <?= number_format($total, 0, '.','.'); ?>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="page-header">
+                <?php if($this->can_i->create_gallery): ?>
+                <a class="btn btn-primary pull-right" href="<?= $this->router->to('adminGalleryEdit', ['id'=>0], ['ref'=>$reff]) ?>">Create New</a>
+                <?php endif; ?>
+                <h3>Galleries</h3>
+            </div>
+            
+            <?php if($galleries): ?>
+            <?php
+                $can_delete     = $this->can_i->remove_gallery;
+                $can_edit       = $this->can_i->update_gallery;
+            ?>
+                <div class="list-group">
+                    <?php foreach($galleries as $gallery): ?>
+                        <div class="list-group-item">
+                            <?php if($can_edit || $can_delete): ?>
+                                <div class="btn-group btn-group-xs pull-right" role="group">
+                                    <?php if($can_edit): ?>
+                                        <a href="<?= $this->router->to('adminGalleryEdit', ['id'=>$gallery->id], ['ref'=>$reff]) ?>" class="btn btn-default" title="Edit">
+                                            <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                                        </a>
+                                    <?php endif; ?>
+
+                                    <?php if($can_delete): ?>
+                                        <button id="gallery-<?= $gallery->id ?>" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-default btn-xs">
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="gallery-<?= $gallery->id ?>">
+                                            <li>
+                                                <a href="<?= $this->router->to('adminGalleryRemove', ['id'=>$gallery->id], ['ref'=>$reff]) ?>" data-confirm="Delete Confirmation" data-confirm-message="Are you sure want to delete this gallery? This action can't be undone." title="Delete" aria-label="Delete">
+                                                    <i class="fa fa-trash" aria-hidden="true"></i> Delete
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    <?php endif; ?>
+                                </div>
+                            <?php endif; ?>
+
+                            <h4 class="list-group-item-heading">
+                                <?= $gallery->name ?>
+                            </h4>
+                            <p class="list-group-item-text small">
+                                <span title="Created">
+                                    <i class="fa fa-calendar-plus-o" aria-hidden="true"></i>
+                                    <?= $gallery->created->format('M d, Y H:i') ?>
+                                </span>
+                                &middot;
+                                <span title="Creator">
+                                    <i class="fa fa-user-circle-o" aria-hidden="true"></i>
+                                    <?= $gallery->user->fullname ?>
+                                </span>
+                            </p>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+
+            <?php
+                if($pagination)
+                    $this->partial('shared/pagination', ['pagination'=>$pagination]);
+            ?>
+        </div>
+    </div>
+</div>
+
+<?php $this->partial('shared/footer'); ?>
