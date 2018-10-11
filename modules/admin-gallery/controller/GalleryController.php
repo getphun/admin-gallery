@@ -121,4 +121,25 @@ class GalleryController extends \AdminController
 
         return $this->respond('component/gallery/index', $params);
     }
+
+    public function removeAction(){
+        if(!$this->user->login)
+            return $this->show404();
+        if(!$this->can_i->remove_gallery)
+            return $this->show404();
+        
+        $id = $this->param->id;
+        $object = Gallery::get($id, false);
+        if(!$object)
+            return $this->show404();
+        
+        $this->fire('gallery:deleted', $object);
+        Gallery::remove($id);
+        
+        $ref = $this->req->getQuery('ref');
+        if($ref)
+            return $this->redirect($ref);
+        
+        return $this->redirectUrl('adminGallery');
+    }
 }
